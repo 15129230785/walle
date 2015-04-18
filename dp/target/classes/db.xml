@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath*:config.properties</value>
+            </list>
+        </property>
+    </bean>
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
+        <property name="url" value="${database.url}"/>
+        <property name="username" value="${database.username}"/>
+        <property name="password" value="${database.password}"/>
+        <property name="driverClassName" value="${database.driverClassName}"/>
+
+        <property name="testOnBorrow" value="true"/>
+        <property name="testOnReturn" value="true"/>
+        <property name="testWhileIdle" value="true"/>
+        <property name="validationQuery" value="SELECT 1"/>
+
+
+        <property name="timeBetweenEvictionRunsMillis" value="1800000"/>
+        <property name="minEvictableIdleTimeMillis" value="1800000"/>
+
+        <!-- 打开PSCache，并且指定每个连接上PSCache的大小 -->
+        <property name="poolPreparedStatements" value="true" />
+        <property name="maxPoolPreparedStatementPerConnectionSize" value="20" />
+
+        <!--initialSize: 初始化连接-->
+        <property name="initialSize" value="0"/>
+        <!--&lt;!&ndash;maxIdle: 最大空闲连接&ndash;&gt;-->
+        <!--<property name="maxIdle" value="20"/>-->
+        <!--minIdle: 最小空闲连接-->
+        <property name="minIdle" value="5"/>
+        <!--maxActive: 最大连接数量-->
+        <property name="maxActive" value="50"/>
+        <!--maxWait: 超时等待时间以毫秒为单位-->
+        <property name="maxWait" value="60000"/>
+
+        <!-- 配置监控统计拦截的filters，去掉后监控界面sql无法统计 -->
+        <property name="filters" value="stat" />
+    </bean>
+
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <bean id="daoManager" class="dp.dubbo.db.service.DaoUtils">
+        <property name="jdbcTemplate" ref="jdbcTemplate"></property>
+    </bean>
+
+    <bean id="jedisConnFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+        <property name="usePool" value="true"/>
+        <property name="poolConfig" ref="redisPool"/>
+        <property name="hostName" value="${redis.hostName}"/>
+        <property name="port" value="${redis.port}"/>
+    </bean>
+
+    <!-- redis template definition -->
+    <bean id="redisTemplate" name="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+        <property name="connectionFactory" ref="jedisConnFactory"/>
+        <property name="exposeConnection" value="true"/>
+        <property name="KeySerializer">
+            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer"></bean>
+        </property>
+        <property name="ValueSerializer">
+            <bean class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer"></bean>
+        </property>
+    </bean>
+
+    <bean id="redisPool" class="redis.clients.jedis.JedisPoolConfig">
+        <!-- 最大连接数 -->
+        <property name="maxTotal" value="2048"/>
+        <!-- 最大超时时间，单位：毫秒 -->
+        <property name="maxWaitMillis" value="10000"/>
+        <!-- 获取连接时，是否检查连接可用，我们默认为不检查，以免影响性能 -->
+        <property name="testOnBorrow" value="false"/>
+        <!-- 在空闲时检查有效性,默认false -->
+        <property name="testWhileIdle" value="true"/>
+        <!-- 多长时间执行一次扫描工作(毫秒),如果为负数,则不运行此线程, 默认-1 -->
+        <property name="timeBetweenEvictionRunsMillis" value="60000"/>
+        <!-- 空闲连接多久时才能被提出 -->
+        <property name="minEvictableIdleTimeMillis" value="60000"/>
+    </bean>
+    <!--<import resource="classpath:execute/rdb-accountimage-execute.xml"/>-->
+</beans>
