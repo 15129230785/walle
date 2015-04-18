@@ -1,0 +1,14 @@
+一、密码的修改:使用mysqladmin命令
+
+1、例如你的 root用户现在没有密码，你希望的密码修改为abc，那么命令是：mysqladmin -u root password abc
+
+2、如果你的root现在有密码了，那么修改密码为abc的命令是：mysqladmin -u root -p password youyou
+注意，命令回车后会问你旧密码，输入旧密码之后命令完成，密码修改成功。
+二、密码的消除
+
+1、以root登录：mysql -u root -p
+
+2、mysql>use mysql;
+
+3、mysql>update user set password='' where user='root';
+重新启动下mysql服务就可以啦
