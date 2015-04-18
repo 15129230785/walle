@@ -88,10 +88,10 @@ public class UserResource {
     public String update(@FormParam(value = "a1") String a1, @FormParam(value = "a2") String a2) {
 
         System.out.println(a1);
-        //System.out.println(userService.getStr(a));
-        if (a1.equals("a1111")) {
-            throw new ServiceException(ExceptionCode.MUST_BE_LESS_THAN_10);
-        }
+        System.out.println(userService.getStr(1));
+//        if (a1.equals("a1111")) {
+//            throw new ServiceException(ExceptionCode.MUST_BE_LESS_THAN_10);
+//        }
         //redisClient.set("2","2");
         logger.info("UserResource update:{}","ss");
         return "11";
