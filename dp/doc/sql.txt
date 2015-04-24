@@ -5,3 +5,29 @@ CREATE TABLE `user` (
   `password` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS `ad_publish_condition_detail_regionandprice`;
+CREATE TABLE `ad_publish_condition_detail_regionandprice` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `condition_id` bigint(20) NOT NULL,
+  `region` longtext,
+  `type` varchar(255)NOT NULL,
+  `price` double(40,2) DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
+
+ALTER TABLE ad_publish_condition_detail_regionandprice
+ADD include tinyint(4) DEFAULT 1
+
+ALTER TABLE ad_publish_condition_detail ADD platform varchar(1000);
+
+ALTER TABLE ad_publish_condition_result ADD product_configuration_type tinyint(4);
+
+alter table ad_publish_condition_detail_regionandprice change type type varchar(255) null;
+
+delete from ad_publish_condition;
+delete from ad_publish_condition_detail;
+delete from ad_publish_condition_detail_account;
+delete from ad_publish_condition_detail_regionandprice;
+delete from ad_publish_condition_result;
