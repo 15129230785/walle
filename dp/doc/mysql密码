@@ -12,3 +12,10 @@
 
 3、mysql>update user set password='' where user='root';
 重新启动下mysql服务就可以啦
+
+
+
+备份数据库
+
+mysqldump --add-drop-table -h127.0.0.1 -uroot -proot warrantdb > D:/warrantdbBackup/warrantdb_201505121733.sql
+mysql -h127.0.0.1 -uroot -pcqadmin warrantdb < D:/warrantdbBackup/warrantdb_201505121733.sql
