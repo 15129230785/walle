@@ -86,10 +86,16 @@
                             <addClasspath>true</addClasspath>
                             <!-- <mainClass>com.winksi.enterprise.job.EnterpriseMerge_v2</mainClass> -->
                             <!--<mainClass>com.winksi.enterprise.merge.Enterprise_excel</mainClass> -->
-                            <mainClass>schedulers.Test</mainClass>
+                            <mainClass>com.yuyue.schedulers.Scheduler</mainClass>
                             <!-- <mainClass>com.winksi.enterprise.job.ImgDown</mainClass> -->
                         </manifest>
                     </archive>
+                    <excludes>
+                        <exclude>**/*.xml</exclude>
+                        <exclude>**/*.properties</exclude>
+                        <exclude>**/*.json</exclude>
+                        <exclude>**/*.sh</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
 
@@ -98,40 +104,97 @@
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>copy</id>
-                        <phase>install</phase>
+                        <id>copy-dependencies</id>
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>lib</outputDirectory>
-                            <!-- 拷贝所以依赖存放位置 -->
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>false</overWriteSnapshots>
+                            <overWriteIfNewer>false</overWriteIfNewer>
                         </configuration>
                     </execution>
                 </executions>
+                <configuration>
+                    <excludeScope>provided</excludeScope>
+                </configuration>
             </plugin>
             <!-- 将生成的jar移动到主目录下面 -->
-            <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy-lib-src-webapps</id>
-                        <phase>package</phase>
-                        <configuration>
-                            <tasks>
-                                <copy todir="${basedir}/lib">
-                                    <fileset dir="target">
-                                        <include name="*.jar" />
-                                    </fileset>
-                                </copy>
-                            </tasks>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+            <!--<plugin>-->
+                <!--<artifactId>maven-antrun-plugin</artifactId>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<id>copy-lib-src-webapps</id>-->
+                        <!--<phase>package</phase>-->
+                        <!--<configuration>-->
+                            <!--<tasks>-->
+                                <!--<copy todir="${basedir}/lib">-->
+                                    <!--<fileset dir="target">-->
+                                        <!--<include name="*.jar" />-->
+                                    <!--</fileset>-->
+                                <!--</copy>-->
+                            <!--</tasks>-->
+                        <!--</configuration>-->
+                        <!--<goals>-->
+                            <!--<goal>run</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
+        <!--</plugins>-->
+
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+                <execution>
+                    <id>copy-lib-src-webapps</id>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>run</goal>
+                    </goals>
+                    <configuration>
+                        <tasks>
+                            <copy todir="${project.build.directory}/deploy/lib">
+                                <fileset dir="${project.build.directory}/lib">
+                                    <exclude name="*-services-*.jar" />
+                                </fileset>
+                            </copy>
+
+                            <echo message="delete service impl jar,the remote call after deployment "/>
+
+                            <echo message="copy owner jar to lib dir..."/>
+                            <copy todir="${project.build.directory}/deploy/lib">
+                                <fileset dir="${project.build.directory}">
+                                    <include name="*.jar" />
+                                </fileset>
+                            </copy>
+
+                            <echo message="copy bin to deploy dir>>>>>>>>>>>>>>>>"/>
+                            <mkdir dir="${project.build.directory}/deploy/bin"/>
+                            <copy todir="${project.build.directory}/deploy/bin">
+                                <fileset dir="src/main/resources">
+                                    <include name="*.sh" />
+                                </fileset>
+                            </copy>
+                            <mkdir dir="${project.build.directory}/deploy/conf"/>
+                            <copy todir="${project.build.directory}/deploy/conf">
+                                <fileset dir="src/main/resources">
+                                    <include name="*.xml" />
+                                    <include name="*.properties" />
+                                    <include name="mapper/*.xml" />
+                                </fileset>
+                            </copy>
+                            <echo message="make tar package ..."/>
+                            <tar destfile="${project.build.directory}/${project.artifactId}_${project.version}.tar" basedir="${project.build.directory}/deploy" />
+                        </tasks>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+
         </plugins>
         <pluginManagement>
             <plugins>

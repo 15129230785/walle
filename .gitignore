@@ -21,7 +21,7 @@ target/
 *.iml
 *.iws
 # Directory-based project format
-.idea/
+.idea
 # Additional for IntelliJ
 out/
 .idea_modules/

@@ -1,12 +1,12 @@
-package schedulers;
+package com.yuyue.schedulers;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * Created by Evan on 2014/8/5.
+ * Created by evan.wan on 2015/5/19.
  */
-public class Test {
+public class Scheduler {
     public static void main(String[] args) {
         System.out.println("Test start.");
         ApplicationContext context = new ClassPathXmlApplicationContext("classpath*:applicationContext.xml");
@@ -14,5 +14,4 @@ public class Test {
         //context.getBean("startQuertz");
         System.out.print("Test end..");
     }
-
 }

@@ -24,12 +24,20 @@
         <processorPath useClasspath="true" />
         <module name="dc" />
         <module name="dp" />
+      </profile>
+      <profile default="false" name="Annotation profile for schedulers" enabled="true">
+        <sourceOutputDir name="target\generated-sources\annotations" />
+        <sourceTestOutputDir name="target\generated-test-sources\test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
         <module name="schedulers" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="dc" target="1.5" />
+      <module name="dp" target="1.5" />
       <module name="schedulers" target="1.7" />
+      <module name="walle" target="1.5" />
     </bytecodeTargetLevel>
   </component>
 </project>
-

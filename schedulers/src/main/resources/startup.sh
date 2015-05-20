@@ -8,15 +8,16 @@ SERVER_LOG_DIR=$SERVER_HOME/log
 SERVER_ERROR_FILE=$SERVER_LOG_DIR/error.out
 SERVER_PID_FILE=$SERVER_LOG_DIR/server.pid
 
-###����
+###启动
 function func_start(){
 
-    MAINCLASS=schedulers.Test
+    MAINCLASS=com.yuyue.schedulers.Scheduler
     LIB=$SERVER_HOME/schedulers/lib
     for jar in $LIB/*
         do
             CLASSPATH=$CLASSPATH:$jar
     done
+    CLASSPATH=$CLASSPATH:$SERVER_HOME/schedulers/conf
 
     #echo $CLASSPATH
     #Djava.ext.dirs=%CLASSPATH%
@@ -26,7 +27,7 @@ function func_start(){
     echo $! > $SERVER_PID_FILE
 }
 
-###ֹͣ
+###停止
 function func_stop(){
      [ ! -f $SERVER_PID_FILE ] && exit
      kill `cat $SERVER_PID_FILE`
